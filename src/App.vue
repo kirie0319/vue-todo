@@ -46,9 +46,16 @@ export default {
   },
   computed: {
     computedTodoList() {
-      return this.todoList.filter(function(e) {
-        return this.current < 0 ? true : this.current === e.status
-      }, this)
+      // return this.todoList.filter(function(e) {
+      //   return this.current < 0 ? true : this.current === e.status
+      // }, this)
+      return this.todoList.filter(todo => {
+        if(this.current < 0) {
+          return todo
+          } else {
+          return this.current === todo.status
+        }
+      })
     }
   },
   methods: {
