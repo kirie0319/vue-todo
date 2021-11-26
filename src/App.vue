@@ -2,7 +2,7 @@
   <div id="app">
     <h1>ToDo List</h1>
     <div v-for="(radio, index) in options" :key="index">
-      <input type="radio" name="status" v-model="current" :value="radio.value">{{radio.lavel}}
+      <input type="radio" name="status" v-model="radioCurrentStatus" :value="radio.value">{{radio.value}}
     </div>
     <table>
       <tr>
@@ -13,7 +13,7 @@
       <tr v-for="(task, index) in computedTodoList" :key="index">
         <td>{{index + 1}}</td>
         <td>{{task.content}}</td>
-        <td>{{task.statusText}}</td>
+        <td>{{task.status}}</td>
         <button @click="changeStatus(index)">changeStatus</button>
         <button @click="deleteTask(index)">delete</button>
       </tr>
@@ -36,24 +36,21 @@ export default {
     return {
       todoList: [],
       todo: '',
-      current: -1,
+      radioCurrentStatus: 'all',
       options: [
-        {value: -1, label: 'all'},
-        {value: 0, label: 'working'},
-        {value: 1, label: 'done'},
+        {value: 'all'},
+        {value: 'working'},
+        {value: 'done'},
       ]
     }
   },
   computed: {
     computedTodoList() {
-      // return this.todoList.filter(function(e) {
-      //   return this.current < 0 ? true : this.current === e.status
-      // }, this)
       return this.todoList.filter(todo => {
-        if(this.current < 0) {
+        if(this.radioCurrentStatus === 'all') {
           return todo
-          } else {
-          return this.current === todo.status
+        } else {
+          return this.radioCurrentStatus === todo.status
         }
       })
     }
@@ -62,8 +59,7 @@ export default {
     createTask(todo) {
       this.todoList.push({
         content: todo,
-        statusText: 'working',
-        status: 0
+        status: 'working'
       });
       this.todo = "";
     },
@@ -71,13 +67,11 @@ export default {
       this.todoList.splice(index, 1);
     },
     changeStatus(index) {
-      let status = this.todoList[index].status;
-      if(status == 0) {
-        this.todoList[index].status = 1;
-        this.todoList[index].statusText = 'done';
+      const status = this.todoList[index].status;
+      if(status === 'working') {
+        this.todoList[index].status = 'done';
       } else {
-        this.todoList[index].status = 0;
-        this.todoList[index].statusText = 'working';
+        this.todoList[index].status = 'working';
       }
     }
   }
