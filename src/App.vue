@@ -1,7 +1,30 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <h1>ToDo List</h1>
+    <div v-for="(radio, index) in options" :key="index">
+      <input type="radio" name="status" v-model="radioCurrentStatus" :value="radio.value">{{radio.value}}
+    </div>
+    <table>
+      <tr>
+        <th>ID</th>
+        <th>comment</th>
+        <th>status</th>
+      </tr>
+      <tr v-for="(task, index) in computedTodoList" :key="index">
+        <td>{{index + 1}}</td>
+        <td>{{task.content}}</td>
+        <td>{{task.status}}</td>
+        <button @click="changeStatus(index)">changeStatus</button>
+        <button @click="deleteTask(index)">delete</button>
+      </tr>
+    </table>
+    <div>
+      <p>new task</p>
+      <div>
+        <input type="text" v-model="todo">
+        <button @click="createTask(todo)">create</button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -9,8 +32,48 @@
 
 export default {
   name: 'App',
-  components: {
-    HelloWorld
+  data() {
+    return {
+      todoList: [],
+      todo: '',
+      radioCurrentStatus: 'all',
+      options: [
+        {value: 'all'},
+        {value: 'working'},
+        {value: 'done'},
+      ]
+    }
+  },
+  computed: {
+    computedTodoList() {
+      return this.todoList.filter(todo => {
+        if(this.radioCurrentStatus === 'all') {
+          return todo
+        } else {
+          return this.radioCurrentStatus === todo.status
+        }
+      })
+    }
+  },
+  methods: {
+    createTask(todo) {
+      this.todoList.push({
+        content: todo,
+        status: 'working'
+      });
+      this.todo = "";
+    },
+    deleteTask(index) {
+      this.todoList.splice(index, 1);
+    },
+    changeStatus(index) {
+      const status = this.todoList[index].status;
+      if(status === 'working') {
+        this.todoList[index].status = 'done';
+      } else {
+        this.todoList[index].status = 'working';
+      }
+    }
   }
 }
 </script>
